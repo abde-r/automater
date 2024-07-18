@@ -1,2 +1,1 @@
-# Cloud-1
-Automating Deployment Process.
+` There is no cloud it’s just someone else’s computer
