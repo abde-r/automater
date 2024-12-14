@@ -1,0 +1,36 @@
+---
+- name: Deploy Go Application
+  hosts: appservers
+  become: true
+  tasks:
+    - name: Install Go Language
+      apt:
+        name: golang
+        state: present
+        update_cache: yes
+
+    - name: Copy Go Application Files to Server
+      copy:
+        src: roles/deploy_app/files/
+        dest: /opt/goapp/
+        owner: mrz3ln
+        group: mrz3ln
+        mode: '0755'
+
+    - name: Build the Go Application
+      shell: |
+        cd /opt/goapp
+        go build -o myapp main.go
+      args:
+        creates: /opt/goapp/myapp
+
+    - name: Start Go Application in Background
+      shell: |
+        nohup /opt/goapp/myapp > /opt/goapp/server.log 2>&1 &
+      args:
+        creates: /opt/goapp/server.log
+
+    - name: Ensure Application is Running
+      shell: pgrep myapp || exit 1
+      register: goapp_status
+      failed_when: goapp_status.rc != 0
