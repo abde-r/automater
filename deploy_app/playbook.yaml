@@ -1,0 +1,19 @@
+---
+- name: Deploy Go Application with Docker
+  hosts: appserver
+  become: true
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Install Docker on Debian
+      import_tasks: tasks/install_docker.yaml
+
+    - name: Copy Go application and Dockerfile
+      import_tasks: tasks/copy_app.yaml
+
+    - name: Deploy Go application with Docker
+      import_tasks: tasks/deploy_app.yaml
+
+    - name: Clean up old containers
+      import_tasks: tasks/cleanup.yaml

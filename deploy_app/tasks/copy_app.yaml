@@ -1,0 +1,10 @@
+---
+- name: Copy Dockerfile to server
+  copy:
+    src: files/Dockerfile
+    dest: /home/{{ ansible_user }}/Dockerfile
+
+- name: Copy Go application source code
+  copy:
+    src: files/app/
+    dest: /home/{{ ansible_user }}/app/
