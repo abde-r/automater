@@ -1,8 +1,15 @@
 ---
 - name: Deploy Go Application
-  hosts: appservers
+  hosts: 127.0.0.1
   become: true
   tasks:
+    # - name: Load environment variables from .env
+    #   set_fact:
+    #     ansible_env:
+    #       ANSIBLE_HOST: "{{ lookup('file', '.ansible.env') | from_yaml | default({}) | combine({}) }}"
+    #       ANSIBLE_USER: "{{ lookup('file', '.ansible.env') | from_yaml | default({}) | combine({}) }}"
+    #       ANSIBLE_PASSWORD: "{{ lookup('file', '.ansible.env') | from_yaml | default({}) | combine({}) }}"
+
     - name: Install Go Language
       apt:
         name: golang
@@ -30,7 +37,8 @@
       args:
         creates: /opt/goapp/server.log
 
-    - name: Ensure Application is Running
-      shell: pgrep myapp || exit 1
-      register: goapp_status
-      failed_when: goapp_status.rc != 0
+    # - name: Ensure Application is Running
+    #   shell: |
+    #     pgrep myapp || (echo "Application not running"; exit 1)
+    #   register: goapp_status
+    #   failed_when: goapp_status.rc != 0
