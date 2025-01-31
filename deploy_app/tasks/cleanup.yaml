@@ -1,3 +1,0 @@
----
-- name: Remove dangling Docker images
-  command: docker image prune -f
