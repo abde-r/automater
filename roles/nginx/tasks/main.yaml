@@ -1,0 +1,32 @@
+---
+- name: Install Nginx
+  homebrew:
+   name: nginx
+   state: latest
+
+# - name: Start Nginx Service
+#   homebrew_services:
+#    name: nginx
+#    state: started
+#    enabled: yes
+
+- name: Copy website files to the webserver
+  copy:
+   src: files/index.html
+   dest: /usr/local/var/www/index.html
+   owner: www-data
+   group: www-data
+   mode: '0644'
+
+- name: Configure Nginx to serve the site
+  template:
+   src: nginx.conf
+   dest: /etc/nginx/sites-available/default
+  notify:
+   - restart nginx
+
+- name: Ensure Nginx is running
+  service :
+   name: nginx
+   state: started
+   enabled: yes

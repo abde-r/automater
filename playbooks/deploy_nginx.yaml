@@ -1,0 +1,6 @@
+- name: Deploy Nginx
+  hosts: webserver
+  vars_files:
+   - vars/nginx_vars.yaml
+  roles:
+   - nginx

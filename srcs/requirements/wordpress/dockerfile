@@ -1,0 +1,27 @@
+FROM debian:buster
+
+RUN apt-get -y update && \
+    apt-get -y install php \
+        php-fpm \
+        php-mysqli \
+        wget \
+        php-common \
+        curl \
+        sudo \
+        php-xml
+
+RUN wget https://wordpress.org/latest.tar.gz && \
+    tar -xzvf latest.tar.gz && \
+    chown -R www-data:www-data wordpress && \
+    mkdir -p /var/www/html && \
+    mv wordpress /var/www/html
+
+COPY conf/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+COPY conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+
+RUN chmod 777 /var/www/html/wordpress/wp-config.php
+
+COPY script.sh .
+RUN chmod +x script.sh
+
+CMD sh script.sh && php-fpm7.3 -F
