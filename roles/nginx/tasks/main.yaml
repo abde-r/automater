@@ -4,11 +4,11 @@
    name: nginx
    state: latest
 
-# - name: Start Nginx Service
-#   homebrew_services:
-#    name: nginx
-#    state: started
-#    enabled: yes
+- name: Start Nginx Service
+  homebrew_services:
+   name: nginx
+   state: started
+   enabled: yes
 
 - name: Copy website files to the webserver
   copy:

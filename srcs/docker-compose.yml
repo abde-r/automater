@@ -1,70 +1,66 @@
-version: '3.8'
+version: '3.9'
 services:
-  nginx:
-    depends_on:
-      - wordpress
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
-    ports:
-      - 443:443
-    env_file:
-      - ./.env
-    volumes:
-      - wp_data:/var/www/html
-    container_name: nginx
-    image: nginx
-    networks:
-      - inception
-    restart: always
-  mariadb:
-    build: 
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-    ports:
-      - 3306:3306
-    env_file:
-      - ./.env
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - db_data:/var/lib/mysql
-    container_name: mariadb
-    image: mariadb
     networks:
       - inception
-    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   wordpress:
     depends_on:
-      - mariadb
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
+      db:
+        condition: service_healthy
+    image: wordpress:latest
+    container_name: wordpress
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
     ports:
-      - 9000:9000
-    env_file:
-      - ./.env
+      - "9000:80"
     volumes:
       - wp_data:/var/www/html
-    container_name: wordpress
-    image: wordpress
     networks:
       - inception
-    restart: always
+
+  phpmyadmin:
+    depends_on:
+      db:
+        condition: service_healthy
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8180:80"
+    env_file: .env
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${PHPMYADMIN_PASSWORD}
+    networks:
+      - inception
 
 volumes:
   db_data:
-    name: db_data
     driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "../data/db_data"
   wp_data:
-    name: wp_data
     driver: local
-    driver_opts:
-      o: bind 
-      type: none
-      device: "../data/wp_data"
 
 networks:
   inception:
