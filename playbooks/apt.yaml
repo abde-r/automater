@@ -1,7 +1,0 @@
-- hosts: "*"
-  become: yes
-  tasks:
-    - name: apt
-      apt:
-        upgrade_cach: yes
-        upgrade: 'yes'

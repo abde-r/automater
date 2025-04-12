@@ -1,1 +1,3 @@
 data
+ansible_env
+.gitignore
