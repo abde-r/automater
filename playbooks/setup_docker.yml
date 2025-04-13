@@ -24,11 +24,11 @@
         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
         state: present
 
-    - name: Add user to docker group
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
+    # - name: Add user to docker group
+    #   user:
+    #     name: ubuntu
+    #     groups: docker
+    #     append: yes
 
     - name: Install Docker Engine
       apt:

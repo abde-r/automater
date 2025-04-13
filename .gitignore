@@ -1,3 +1,11 @@
 data
-ansible_env
 .gitignore
+.env
+
+# Ansible
+ansible_env
+
+# Terraform
+.terraform
+terraform.tfstate.backup
+.terraform.lock.hcl
