@@ -1,27 +1,13 @@
-FROM debian:buster
+FROM wordpress:latest
 
-RUN apt-get -y update && \
-    apt-get -y install php \
-        php-fpm \
-        php-mysqli \
-        wget \
-        php-common \
-        curl \
-        sudo \
-        php-xml
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
 
-RUN wget https://wordpress.org/latest.tar.gz && \
-    tar -xzvf latest.tar.gz && \
-    chown -R www-data:www-data wordpress && \
-    mkdir -p /var/www/html && \
-    mv wordpress /var/www/html
+# Copy our custom entrypoint script into the image.
+COPY entrypoint.sh /usr/local/bin/wp-entrypoint.sh
+RUN chmod +x /usr/local/bin/wp-entrypoint.sh
 
-COPY conf/wp-config.php /var/www/html/wordpress/wp-config.php
-COPY conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
-
-RUN chmod 777 /var/www/html/wordpress/wp-config.php
-
-COPY script.sh .
-RUN chmod +x script.sh
-
-CMD sh script.sh && php-fpm7.3 -F
+# Use our custom entrypoint script.
+ENTRYPOINT ["/usr/local/bin/wp-entrypoint.sh"]
