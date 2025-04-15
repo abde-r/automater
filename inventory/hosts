@@ -1,0 +1,2 @@
+[ec2]
+54.196.153.47 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/myKeyPair.pem
