@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   db:
-    image: mysql:5.7
+    image: mysql:latest
     container_name: db
     restart: unless-stopped
     env_file: .env
@@ -19,51 +19,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # wordpress:
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   image: wordpress:latest
-  #   container_name: wordpress
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   environment:
-  #     WORDPRESS_DB_HOST: ${DB_HOST}
-  #     WORDPRESS_DB_USER: ${MYSQL_USER}
-  #     WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-  #     WORDPRESS_DB_NAME: wordpress
-  #   ports:
-  #     - "9000:80"
-  #   volumes:
-  #     - wp_data:/var/www/html
-  #     - ./entrypoint.sh:/var/www/html/entrypoint.sh:ro
-  #   networks:
-  #     - cloud-1
   wordpress:
-    image: wordpress:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    build: .
     container_name: wordpress
     restart: unless-stopped
     env_file: .env
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: ${WP_DB_HOST}
+      WORDPRESS_DB_USER: ${WP_ADMIN_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_ADMIN_PASS}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-      WORDPRESS_SITE_URL: http://localhost:9000
-      WORDPRESS_TITLE: "My WordPress Site"
-      WORDPRESS_ADMIN_USER: user
-      WORDPRESS_ADMIN_PASSWORD: pass
-      WORDPRESS_ADMIN_EMAIL: admin@example.com
     ports:
       - "9000:80"
+      - "9443:443"
     volumes:
       - wp_data:/var/www/html
-      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+      - ./entrypoint.sh:/usr/local/bin/custom-entrypoint.sh
+    command: ["bash", "/usr/local/bin/custom-entrypoint.sh"]
     networks:
       - cloud-1
-
   phpmyadmin:
     depends_on:
       db:
@@ -77,6 +54,19 @@ services:
     environment:
       PMA_HOST: ${DB_HOST}
       MYSQL_ROOT_PASSWORD: ${PHPMYADMIN_PASSWORD}
+    networks:
+      - cloud-1
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - wordpress
     networks:
       - cloud-1
 

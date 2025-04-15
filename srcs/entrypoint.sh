@@ -1,17 +1,10 @@
 #!/bin/bash
 set -e
 
-echo "Waiting for MySQL to be available..."
-# Wait until MySQL (db service) responds
-# while ! mysqladmin ping -h"$WORDPRESS_DB_HOST" --silent; do
-#   sleep 3
-# done
+export WP_CLI_PHP_ARGS='-d memory_limit=256M'
 
-echo "MySQL is available."
-
-# If WordPress is not installed, run the installation.
-if ! wp core is-installed --path="/var/www/html" --allow-root; then
-    echo "WordPress not installed. Installing..."
+# Only install WordPress once
+if [ ! -f /var/www/html/.wp-installed ]; then
     wp core download --allow-root --path="/var/www/html" --force
     wp core config \
         --dbname="$WORDPRESS_DB_NAME" \
@@ -20,16 +13,17 @@ if ! wp core is-installed --path="/var/www/html" --allow-root; then
         --dbhost="$WORDPRESS_DB_HOST" \
         --allow-root --skip-check
     wp core install \
-        --url="http://localhost:9000" \
-        --title="My WordPress Site" \
-        --admin_user=admin \
-        --admin_password=admin \
-        --admin_email=admin@example.com \
+        --url="https://localhost:9443" \
+        --title="cloud-1" \
+        --admin_user=user \
+        --admin_password=pass \
+        --admin_email=user@example.com \
         --allow-root
-    echo "WordPress installed successfully."
-else
-    echo "WordPress is already installed."
+    touch /var/www/html/.wp-installed
 fi
 
-# Start the webserver (the official image uses apache2-foreground).
+wp option update siteurl "https://localhost" --allow-root
+wp option update home "https://localhost" --allow-root
+
+# Start Apache in the foreground to keep the container alive
 exec apache2-foreground
