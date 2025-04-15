@@ -22,8 +22,8 @@ if [ ! -f /var/www/html/.wp-installed ]; then
     touch /var/www/html/.wp-installed
 fi
 
-wp option update siteurl "https://localhost" --allow-root
-wp option update home "https://localhost" --allow-root
+wp option update siteurl "https://localhost:9443" --allow-root
+wp option update home "https://localhost:9443" --allow-root
 
 # Start Apache in the foreground to keep the container alive
 exec apache2-foreground

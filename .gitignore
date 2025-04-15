@@ -1,4 +1,8 @@
 .env
 ./src/.env
-./src/nginx/certs
+./src/apache/ssl
 /data
+terraform.tfstate.backup
+terraform.tfstate
+.terraform.lock.hcl
+.terraform

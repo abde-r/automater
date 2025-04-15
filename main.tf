@@ -9,9 +9,10 @@ resource "aws_instance" "cloud-1" {
     instance_type = "t2.micro"
     key_name = var.key_name
     security_groups = ["terraform_sg"]
+    count = 2
 
     tags = {
-        Name = "server-1"
+        Name = "server"
     }
 }
 
