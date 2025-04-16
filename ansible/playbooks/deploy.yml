@@ -1,0 +1,5 @@
+- name: Deploy WordPress with Docker Compose
+  hosts: ec2
+  become: yes
+  roles:
+    - deploy

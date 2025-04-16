@@ -1,0 +1,6 @@
+---
+- name: Setup EC2 Environment
+  hosts: ec2
+  become: yes
+  roles:
+    - setup

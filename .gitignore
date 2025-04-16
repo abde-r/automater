@@ -1,8 +1,6 @@
 .env
 ./src/.env
 ./src/apache/ssl
-/data
-terraform.tfstate.backup
-terraform.tfstate
-.terraform.lock.hcl
-.terraform
+./data
+./terraform
+./ansible/inventory

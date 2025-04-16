@@ -9,3 +9,9 @@ $(NAME):
 
 down:
 	docker compose -f ./srcs/docker-compose.yml down -v
+
+deploy:
+	go run ./scripts/main.go
+
+clean:
+	rm -rf terraform

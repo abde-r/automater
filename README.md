@@ -1,7 +1,7 @@
 
 <div align="center">
 <img alt="img" src="https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fuywdwbbje5dcjzesqiay.png"/><br/>
-<code>`There is no cloud it’s just someone else’s computer</code>
+<code><strong>`UNLIMITED POWER</strong></code>
 </div>
 <br/>
 Integrating AWS, Ansible, Terraform, and Docker-Compose provides a powerful framework for managing cloud infrastructure and deploying applications. By leveraging the strengths of each tool, organizations can streamline their workflows, improve consistency, and enhance scalability. This combination is essential for modern DevOps practices and cloud-native application development.
