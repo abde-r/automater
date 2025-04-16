@@ -3,4 +3,4 @@
 ./src/apache/ssl
 ./data
 ./terraform
-./ansible/inventory
+ansible/inventory
