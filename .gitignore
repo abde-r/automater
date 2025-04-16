@@ -1,6 +1,6 @@
 .env
 srcs/.env
-srcs/apache/ssl/
+srcs/apache/ssl
 data/
 terraform/
 ansible/inventory/
