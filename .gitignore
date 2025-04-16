@@ -1,6 +1,6 @@
 .env
-./src/.env
-./src/apache/ssl
-./data
-./terraform
-./ansible/inventory/
+src/.env
+src/apache/ssl/
+data/
+terraform/
+ansible/inventory/
