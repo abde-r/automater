@@ -30,47 +30,47 @@ func runCommand(args ...string) error {
 }
 
 func runTerraformApply() {
-	err := os.Chdir("./terraform")
+	err := os.Chdir("terraform")
 	if err != nil {
-		fmt.Println("Failed to change directory:", err)
+		fmt.Println("❌ Failed to change directory:", err)
 		return
 	}
 
 	fmt.Println("Initializing Terraform...")
 	if err := runCommand("init"); err != nil {
-		fmt.Println("Error running terraform init:", err)
+		fmt.Println("❌ Error running terraform init:", err)
 		return
 	}
 
 	fmt.Println("Planning Terraform...")
 	if err := runCommand("plan"); err != nil {
-		fmt.Println("Error running terraform plan:", err)
+		fmt.Println("❌ Error running terraform plan:", err)
 		return
 	}
 
 	fmt.Println("Applying Terraform...")
 	if err := runCommand("apply", "-auto-approve"); err != nil {
-		fmt.Println("Error running terraform apply:", err)
+		fmt.Println("❌ Error running terraform apply:", err)
 		return
 	}
 
-	fmt.Println("Terraform apply completed successfully.")
+	fmt.Println("✅ Terraform apply completed successfully.")
 }
 
 func getInstanceIPsFromState(stateFilePath string) ([]string, error) {
 	data, err := os.ReadFile(stateFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read state file: %w", err)
+		return nil, fmt.Errorf("❌ failed to read state file: %w", err)
 	}
 
 	var tfState map[string]interface{}
 	if err := json.Unmarshal(data, &tfState); err != nil {
-		return nil, fmt.Errorf("failed to parse JSON: %w", err)
+		return nil, fmt.Errorf("❌ failed to parse JSON: %w", err)
 	}
 
 	resources, ok := tfState["resources"].([]interface{})
 	if !ok {
-		return nil, fmt.Errorf("unexpected structure in state file: resources not found")
+		return nil, fmt.Errorf("❌ unexpected structure in state file: resources not found")
 	}
 
 	var ips []string
@@ -122,14 +122,14 @@ func writeInventoryFile(ips []string, path string) error {
 func main() {
 	err := os.MkdirAll("terraform", 0755)
 	if err != nil {
-		fmt.Println("Error creating terraform directory:", err)
+		fmt.Println("❌ Error creating terraform directory:", err)
 		return
 	}
 
 	// Load environment variables from .env
-	err = godotenv.Load("../.env")
+	err = godotenv.Load(".env")
 	if err != nil {
-		fmt.Println("Error loading .env file:", err)
+		fmt.Println("❌ Error loading .env file:", err)
 		return
 	}
 
@@ -191,34 +191,33 @@ func main() {
 	tfPath := filepath.Join("terraform", "main.tf")
 	err = os.WriteFile(tfPath, []byte(content), 0644)
 	if err != nil {
-		fmt.Println("Error writing main.tf:", err)
+		fmt.Println("❌ Error writing main.tf:", err)
 		return
 	}
 
-	fmt.Println("Terraform file written: terraform/main.tf")
+	fmt.Println("✅ Terraform file written: terraform/main.tf")
 	runTerraformApply()
 	
-	ips, err := getInstanceIPsFromState("../terraform/terraform.tfstate")
+	ips, err := getInstanceIPsFromState("terraform/terraform.tfstate")
 	if err != nil {
-		fmt.Println("Error reading state:", err)
+		fmt.Println("❌ Error reading state:", err)
 		return
 	}
-	fmt.Println("Public IPs:", ips)
 
-	if err := writeInventoryFile(ips, "../ansible/inventory/inventory.ini"); err != nil {
-		fmt.Println("Failed to write inventory file:", err)
+	if err := writeInventoryFile(ips, "ansible/inventory/inventory.ini"); err != nil {
+		fmt.Println("❌ Failed to write inventory file:", err)
 		return
 	}
 
 	fmt.Println("Running Ansible Setup Playbook...")
-	if err := runAnsiblePlaybook("../ansible/playbooks/setup.yml", "../ansible/inventory/inventory.ini"); err != nil {
-		fmt.Println("Error running Ansible Setup Playbook:", err)
+	if err := runAnsiblePlaybook("ansible/setup.yml", "ansible/inventory/inventory.ini"); err != nil {
+		fmt.Println("❌ Error running Ansible Setup Playbook:", err)
 		return
 	}
 	fmt.Println("Running Ansible Deploy Playbook...")
-	if err := runAnsiblePlaybook("../ansible/playbooks/deploy.yml", "../ansible/inventory/inventory.ini"); err != nil {
-		fmt.Println("Error running Ansible Deploy Playbook:", err)
+	if err := runAnsiblePlaybook("ansible/deploy.yml", "ansible/inventory/inventory.ini"); err != nil {
+		fmt.Println("❌ Error running Ansible Deploy Playbook:", err)
 		return
 	}
-	fmt.Println("Ansible playbook completed successfully.")
+	fmt.Println("✅ Ansible playbook completed successfully.")
 }

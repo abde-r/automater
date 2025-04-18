@@ -46,3 +46,15 @@
       owner: ubuntu
       group: ubuntu
       mode: '0644'
+
+  - name: Get public IP of the EC2 instance
+    uri:
+      url: http://checkip.amazonaws.com
+      return_content: yes
+    register: public_ip
+
+  - name: Add WP_URL to .env
+    lineinfile:
+      path: ../srcs/.env
+      line: "WP_URL=https://{{ public_ip.content | trim }}:9443"
+      create: yes

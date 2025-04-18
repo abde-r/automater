@@ -4,3 +4,4 @@ srcs/apache/ssl
 data/
 terraform/
 ansible/inventory/
+ansible/group_vars/

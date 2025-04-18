@@ -13,5 +13,6 @@ down:
 deploy:
 	go run ./scripts/main.go
 
-clean:
+destroy:
+	terraform destroy
 	rm -rf terraform

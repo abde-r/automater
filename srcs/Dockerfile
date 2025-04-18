@@ -8,11 +8,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # Increase PHP memory limit
 RUN echo "memory_limit = 256M" > /usr/local/etc/php/conf.d/memory.ini
 
-# Copy SSL certs
 COPY apache/ssl/selfsigned.crt /etc/ssl/certs/selfsigned.crt
 COPY apache/ssl/selfsigned.key /etc/ssl/private/selfsigned.key
 
-# Override default SSL config
 COPY apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
 # Enable SSL modules and site (no reload/start!)

@@ -34,10 +34,11 @@ services:
       WORDPRESS_DB_PASSWORD: ${WP_ADMIN_PASS}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
     ports:
-      - "9443:443"
+      - "80:443"
     volumes:
       - wp_data:/var/www/html
       - ./entrypoint.sh:/usr/local/bin/custom-entrypoint.sh
+      - ./.env:/usr/local/bin/.env
     command: ["bash", "/usr/local/bin/custom-entrypoint.sh"]
     networks:
       - cloud-1
@@ -45,11 +46,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    image: phpmyadmin/phpmyadmin:latest
+    build:
+      context: .
     container_name: phpmyadmin
     restart: unless-stopped
     ports:
-      - "8180:80"
+      - "8180:443"
     env_file: .env
     environment:
       PMA_HOST: ${DB_HOST}
