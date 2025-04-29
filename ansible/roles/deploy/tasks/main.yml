@@ -1,0 +1,4 @@
+---
+- include_tasks: init_project_dir.yml
+- include_tasks: copy_files.yml
+- include_tasks: deploy_compose.yml

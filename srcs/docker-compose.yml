@@ -1,0 +1,71 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:latest
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - cloud-1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  wordpress:
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: .
+    container_name: wordpress
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: ${WP_DB_HOST}
+      WORDPRESS_DB_USER: ${WP_ADMIN_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_ADMIN_PASS}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - wp_data:/var/www/html
+      - ./entrypoint.sh:/usr/local/bin/custom-entrypoint.sh
+      - ./.env:/usr/local/bin/.env
+    command: ["bash", "/usr/local/bin/custom-entrypoint.sh"]
+    networks:
+      - cloud-1
+  phpmyadmin:
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: ./apache/
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8180:443"
+    env_file: .env
+    environment:
+      PMA_HOST: ${DB_HOST}
+      MYSQL_ROOT_PASSWORD: ${PHPMYADMIN_PASSWORD}
+    networks:
+      - cloud-1
+
+volumes:
+  db_data:
+    driver: local
+  wp_data:
+    driver: local
+
+networks:
+  cloud-1:
+    driver: bridge

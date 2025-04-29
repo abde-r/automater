@@ -1,0 +1,8 @@
+---
+  - name: Create project directory
+    file:
+      path: "{{ project_dir }}"
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'

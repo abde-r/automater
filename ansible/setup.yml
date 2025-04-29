@@ -1,0 +1,6 @@
+---
+- name: Setup Droplets Environment
+  hosts: droplets
+  become: yes
+  roles:
+    - setup

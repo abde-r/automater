@@ -1,0 +1,6 @@
+.env
+srcs/.env
+data/
+terraform/
+ansible/inventory/
+ansible/group_vars/

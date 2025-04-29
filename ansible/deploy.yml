@@ -1,0 +1,5 @@
+- name: Deploy WordPress with Docker Compose
+  hosts: droplets
+  become: yes
+  roles:
+    - deploy
