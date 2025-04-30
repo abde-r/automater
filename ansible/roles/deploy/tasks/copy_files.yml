@@ -1,5 +1,5 @@
 ---
-  - name: Copy docker-compose.yml to EC2 instance
+  - name: Copy docker-compose.yml to DO droplets
     copy:
       src: ../srcs/docker-compose.yml
       dest: "{{ project_dir }}/docker-compose.yml"
@@ -7,7 +7,7 @@
       group: root
       mode: '0644'
 
-  - name: Copy docker-compose.yml to EC2 instance
+  - name: Copy docker-compose.yml to DO droplets
     copy:
       src: ../srcs/docker-compose.yml
       dest: "{{ project_dir }}/docker-compose.yml"
@@ -15,7 +15,7 @@
       group: root
       mode: '0644'
 
-  - name: Copy Dockerfile to EC2 instance
+  - name: Copy Dockerfile to DO droplets
     copy:
       src: ../srcs/Dockerfile
       dest: "{{ project_dir }}/Dockerfile"
@@ -23,7 +23,7 @@
       group: root
       mode: '0644'
 
-  - name: Copy apache config to EC2 instance
+  - name: Copy apache config to DO droplets
     copy:
       src: ../srcs/apache
       dest: "{{ project_dir }}/"
@@ -31,7 +31,7 @@
       group: root
       mode: '0644'
 
-  - name: Copy entrypoint script to EC2 instance
+  - name: Copy entrypoint script to DO droplets
     copy:
       src: ../srcs/entrypoint.sh
       dest: "{{ project_dir }}/entrypoint.sh"
@@ -39,7 +39,7 @@
       group: root
       mode: '0644'
 
-  - name: Copy .env file to EC2 instance
+  - name: Copy .env file to DO droplets
     copy:
       src: ../srcs/.env
       dest: "{{ project_dir }}/.env"
@@ -47,7 +47,7 @@
       group: root
       mode: '0644'
 
-  - name: Get public IP of the EC2 instance
+  - name: Get public IP of the DO droplets
     uri:
       url: http://checkip.amazonaws.com
       return_content: yes
